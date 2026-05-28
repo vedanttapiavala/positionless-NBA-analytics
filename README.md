@@ -33,3 +33,13 @@ All files referenced in this section are in code/injury_scraping.
         * Manual Player Renaming - aligning player names between sources
     * **Function:** Merges player, team, and position data
     * **Outputs:** Processed positions data including player and team-level data.
+## Exploratory Data Analysis of Player Positions
+* 004_general_EDA.ipynb
+    * **Inputs:** Processed positions data from 003_preprocessing.ipynb
+    * **Function:** Exploratory data analysis
+    * **Outputs:**
+        * Heatmap indicating the general profiles of different positions
+        * How certain features have changed over time for the five positions
+        * Distribution of player positions in the dataset
+        * Distribution of the five major stats (points, rebounds, assists, blocks, and steals) per position.
+        * Position homogeneity over time using pairwise Euclidean distance
