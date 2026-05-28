@@ -43,3 +43,12 @@ All files referenced in this section are in code/injury_scraping.
         * Distribution of player positions in the dataset
         * Distribution of the five major stats (points, rebounds, assists, blocks, and steals) per position.
         * Position homogeneity over time using pairwise Euclidean distance
+## Evaluating the Rise of Positionless Basketball
+* 005_feature_selection.ipynb
+    * **Inputs:** Processed positions data from 003_preprocessing.ipynb
+    * **Function:** Select features for player position prediction using a networks-based algorithm aimed at lowering multicollinearity, followed by Boruta selection.
+    * **Outputs:** A list of features selected for predicting player positions.
+* 006_change_point_detection.ipynb
+    * **Inputs:** Processed positions data from 003_preprocessing.ipynb. Important features selected by 005_feature_selection.ipynb.
+    * **Function:** Predict player positions within each season's data using a LightGBM Classifier. Uses the PELT algorithm on smoothed and unsmoothed data to find when model performance changed over seasons. This drop in AUC is operationally defined to signal increasing positionless behavior across the association.
+    * **Outputs:** Player-game level data, with a column for that player's positionless index (using entropy of the model's prediction).
