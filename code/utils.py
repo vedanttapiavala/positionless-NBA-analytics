@@ -17,7 +17,9 @@ def convert_csv_parquet(filename, dtype_arr, usecols) -> None:
     assert len(df) == len(df_parquet), 'Different Number of Rows in Resulting Parquet'
 
 def test_model(df_model):
-
+    assert 'gameDateTimeEst_player' in df_model.columns, 'Game Date/Time Not Found'
+    assert 'injury_within_14d' in df_model.columns, 'Target Variable for Injury Not Found'
+    
     train = df_model[df_model['gameDateTimeEst_player'] < '2023-10-01'].copy()
     test  = df_model[df_model['gameDateTimeEst_player'] >= '2023-10-01'].copy()
 
