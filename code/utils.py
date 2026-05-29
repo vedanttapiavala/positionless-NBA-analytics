@@ -5,6 +5,17 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score, average_precision_score
 
+def convert_csv_parquet(filename, dtype_arr, usecols) -> None:
+    df = pd.read_csv(f'{filename}.csv', dtype=dtype_arr,  usecols=usecols)
+
+    df.to_parquet(f'{filename}.parquet', compression='snappy')
+
+    df_parquet = pd.read_parquet(f'{filename}.parquet')
+
+    assert df.shape == df_parquet.shape, 'Resulting Parquet Shape Not the Same'
+    assert df.columns == df_parquet.columns, 'Different Number of Columns in Resulting Parquet'
+    assert len(df) == len(df_parquet), 'Different Number of Rows in Resulting Parquet'
+
 def test_model(df_model):
 
     train = df_model[df_model['gameDateTimeEst_player'] < '2023-10-01'].copy()
