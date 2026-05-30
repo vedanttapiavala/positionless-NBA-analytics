@@ -70,7 +70,10 @@ def prune_redundant_features(X):
         if f not in kept_features:
             uncovered_neighbors[f] = len([n for n in G.neighbors(f) if n not in covered])
     
-    return kept_features, set(features) - set(kept_features)
+    return (
+        set(kept_features) | (set(X.columns) - set(features)),
+        set(features) - set(kept_features)
+    )
 
 def test_model(df_model):
     assert 'gameDateTimeEst_player' in df_model.columns, 'Game Date/Time Not Found'
