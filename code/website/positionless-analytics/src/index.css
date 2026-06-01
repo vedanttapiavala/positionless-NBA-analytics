@@ -194,11 +194,10 @@ nav.topnav {
   color: var(--white);
   margin-bottom: 1rem;
 }
-.section p {
+.section p, .section > div:not([class]) {
   color: var(--text2);
-  max-width: 720px;
   line-height: 1.75;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Chart card */

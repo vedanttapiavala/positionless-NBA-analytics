@@ -116,7 +116,7 @@ export default function Home({ data }) {
         <div className="section-title">When did the NBA go positionless?<br></br>Does this relate to the increased 
           amount of injuries?
         </div>
-        <p>
+        <div>
           Analysts, players, and NBA Commissioner Adam Silver have mentioned the increased positionless nature
           of the game. When did this happen? Guards rebound, and we see 7'5" centers shooting threes from
           halfcourt. <br></br>
@@ -124,7 +124,7 @@ export default function Home({ data }) {
             <ol>How do we quantify positionless basketball?</ol>
             <ol>When did it accelerate?</ol>
             <ol>Are more positionless players at increased injury risk?</ol></strong>
-        </p>
+        </div>
         <p>
           We introduce a continuous <strong style={{color:'var(--text)'}}>Positionless Index</strong>, a quantifiable
           measure of positionless basketball played on a per player-season basis.
@@ -137,12 +137,12 @@ export default function Home({ data }) {
       <div className="section">
         <div className="section-label">Data</div>
         <div className="section-title">Sources & Coverage</div>
-        <p>
+        <div>
           This study combines several datasets, including:
           <ul><li>
             <a href='https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores' target='_blank'>
           <strong>NBA Box Scores - Player and Team Statistics</strong></a>
-          <blockquote class='indented'>NBA regular season, playoff, and play-in games were analyzed from 1983-84 through 2025–26. 
+          <blockquote className='indented'>NBA regular season, playoff, and play-in games were analyzed from 1983-84 through 2025–26. 
           Individual player games were analyzed for all players logging at least 10 minutes and one field goal attempt.
           Overall, this led to the inclusion of over 870,000 player–game records.
           Each record includes box-score statistics for both the player and the team.</blockquote>
@@ -153,7 +153,7 @@ export default function Home({ data }) {
                 Basketball Reference Season Totals
               </strong>
             </a>
-              <blockquote class='indented'>
+              <blockquote className='indented'>
                   Basketball Reference season-level tables were scraped to find players' positions.
               </blockquote>
           </li>
@@ -163,7 +163,7 @@ export default function Home({ data }) {
                 Injury Reports
               </strong>
             </a>
-            <blockquote class='indented'>
+            <blockquote className='indented'>
               Injury reports from 2011-2025 were included. These were merged with box score, travel, and NBA
               player information to create logistic regression models for mergeable player-game observations.
             </blockquote>
@@ -174,13 +174,13 @@ export default function Home({ data }) {
                 NBA Stats API
               </strong>
             </a>
-            <blockquote class='indented'>
+            <blockquote className='indented'>
               Game logs were used to generate travel data for players, and biographical information (e.g.,
               height, weight, and age) were scraped.
             </blockquote>
           </li>
           </ul>
-        </p>
+        </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
           {['Box Scores','Basketball Reference','Injury Reports','Travel Data','Biographical Info'].map(t => (
             <span key={t} className="tag">{t}</span>
@@ -192,7 +192,7 @@ export default function Home({ data }) {
       <div className="section">
         <div className="section-label">Methods</div>
         <div className="section-title">Season-Level Player Position Prediction + Positionless Index</div>
-        <p>
+        <div>
           After tuning model hyperparameters on aggregated player position data, season-level predictive models
           were constructed. These models were used for two purposes:
           <ol><li><strong>
@@ -209,7 +209,7 @@ export default function Home({ data }) {
               Positionless index was calculated as the entropy of the model's probabilities.
           </li>
           </ol>
-        </p>
+        </div>
         <div className="section-title">Injury Risk Prediction</div>
         <p>
           Injury risk (if a player got injured in the next 14 days) was modeled using both logistic regression 
@@ -242,7 +242,7 @@ export default function Home({ data }) {
       <div className="section">
         <div className="section-label">Takeaway</div>
         <div className="section-title">Recommendations for Teams</div>
-        <p>
+        <div>
           The shift to positionless basketball is real and quantifiable. While positional versatility can
           create mismatches and strategic nuances, the players tasked with these skillsets tend to be injured
           more frequently. Specifically, positionless players tasked with spacing seem to be at 
@@ -255,7 +255,7 @@ export default function Home({ data }) {
               and prevent injuries, even if it leads to a slightly inferior seeding than the team's potential seed.
             </li>
           </ol>
-        </p>
+        </div>
       </div>
 
       <div className="section">

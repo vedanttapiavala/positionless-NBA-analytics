@@ -4,7 +4,6 @@ import Loader  from './components/Loader'
 import useData from './hooks/useData'
 import Home      from './pages/Home'
 import Explorer  from './pages/Explorer'
-import Dashboard from './pages/Dashboard'
 import Paper     from './pages/Paper'
 
 export default function App() {
@@ -20,7 +19,6 @@ export default function App() {
           <Routes>
             <Route path="/"          element={<Home      data={data} />} />
             <Route path="/explorer"  element={<Explorer  data={data} />} />
-            <Route path="/dashboard" element={<Dashboard data={data} />} />
             <Route path="/paper"     element={<Paper />} />
           </Routes>
         </main>
