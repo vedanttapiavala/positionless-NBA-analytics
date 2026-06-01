@@ -71,7 +71,7 @@ export default function InteractionForestPlot() {
           >
             Increased 3-point attempts, makes, and percentage are associated with a stronger positive
             interaction between positionless index and injury risk. Assists also show a similar amplifying
-            interaction, while points show a moderating effect.
+            interaction.
           </p>
         </div>
       </div>
