@@ -260,12 +260,10 @@ export default function Home({ data }) {
 
       <div className="section">
         <div className="section-label">More Resources</div>
-        <div className="section-title">Positionless Index Explorer + Injury Risk Dashboard</div>
+        <div className="section-title">Positionless Index Explorer</div>
         <p>
           Use the <a href="/explorer">Positionless Index Explorer</a> to browse the full player-season index table
-          and explore how players' games became more or less positionless over time.
-          The <a href="/dashboard">Injury Risk Dashboard</a> explores how the ten most important input features
-          drive predicted injury probability for a custom player profile.         
+          and explore how players' games became more or less positionless over time.    
         </p>
       </div>
         
