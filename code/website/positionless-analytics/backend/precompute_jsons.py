@@ -3,20 +3,21 @@ import json
 from pathlib import Path
 
 df = pd.read_parquet('data/Player-Games_Injuries_Travel_Bio.parquet')
-positionless_index_table = df[['Name', 'playerteamName', 'season_x', 'positionless_index']].copy()
-positionless_index_table = positionless_index_table.rename(columns={
-    'season_x': 'season'
-}).drop_duplicates()
+
+# Expanding parquet back further since we don't need injury data for the index explorer
+pi_table_df = pd.read_parquet('data/Player-Games with Positionless Index.parquet')
+pi_table_df['Name'] = pi_table_df['firstName'] + ' ' + pi_table_df['lastName']
+positionless_index_table = pi_table_df[['Name', 'playerteamName', 'season', 'positionless_index']].copy()
+positionless_index_table = positionless_index_table.drop_duplicates()
 
 positionless_index_table = (
-    df[['Name', 'playerteamName', 'season_x', 'positionless_index']]
-    .groupby(['Name', 'season_x'], as_index=False)
+    pi_table_df[['Name', 'playerteamName', 'season', 'positionless_index']]
+    .groupby(['Name', 'season'], as_index=False)
     .agg(
         playerteamName=('playerteamName', lambda x: ' / '.join(sorted(set(x)))),
         positionless_index=('positionless_index', 'mean'),
         games_played=('positionless_index', 'count')
     )
-    .rename(columns={'season_x': 'season'})
 )
 
 players_index_table = positionless_index_table.to_dict(orient="records")

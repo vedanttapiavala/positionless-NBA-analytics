@@ -16,7 +16,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       <div style={{ color: '#9090aa', marginBottom: 4 }}>{label - 1}–{label}</div>
       {payload.map(p => (
         <div key={p.name} style={{ color: ORANGE }}>
-          Index: <strong>{typeof p.value === 'number' ? p.value.toFixed(4) : p.value}</strong>
+          Z-Score: <strong>{typeof p.value === 'number' ? p.value.toFixed(4) : p.value}</strong>
         </div>
       ))}
     </div>
@@ -31,13 +31,31 @@ function PlayerModal({ player, data, onClose }) {
     [data, player]
   )
 
-  const traj = useMemo(() =>
-    (data?.playersIndexTable || [])
+  const traj = useMemo(() => {
+    const allRows = data?.playersIndexTable || []
+
+    const seasonStats = {}
+    allRows.forEach(r => {
+      if (!seasonStats[r.season]) seasonStats[r.season] = { vals: [] }
+      seasonStats[r.season].vals.push(r.positionless_index)
+    })
+    Object.entries(seasonStats).forEach(([s, { vals }]) => {
+      const mean = vals.reduce((a, b) => a + b, 0) / vals.length
+      const std  = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length)
+      seasonStats[s] = { mean, std }
+    })
+
+    return allRows
       .filter(r => r.Name === player)
-      .map(r => ({ season: r.season, positionless_index: r.positionless_index }))
-      .sort((a, b) => a.season - b.season),
-    [data, player]
-  )
+      .map(r => {
+        const { mean, std } = seasonStats[r.season] || { mean: 0, std: 1 }
+        return {
+          season: r.season,
+          positionless_index: std === 0 ? 0 : (r.positionless_index - mean) / std
+        }
+      })
+      .sort((a, b) => a.season - b.season)
+  }, [data, player])
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -48,7 +66,7 @@ function PlayerModal({ player, data, onClose }) {
         </div>
 
         <div className="chart-card" style={{ marginBottom: '1.2rem' }}>
-          <div className="chart-title">Positionless Index Over Time</div>
+          <div className="chart-title">Positionless Index Over Time (Season-Normalized)</div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={traj} margin={{ top: 4, right: 16, bottom: 4, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#2a2a3e" />
@@ -103,14 +121,31 @@ export default function Explorer({ data }) {
 
   const rows = data?.playersIndexTable || []
 
-  const teams   = useMemo(() => [...new Set(rows.map(r => r.playerteamName))].sort(), [rows])
-  const seasons = useMemo(() => [...new Set(rows.map(r => r.season))].sort((a, b) => b - a), [rows])
+  const rowsWithZ = useMemo(() => {
+    const seasonStats = {}
+    rows.forEach(r => {
+      if (!seasonStats[r.season]) seasonStats[r.season] = { vals: [] }
+      seasonStats[r.season].vals.push(r.positionless_index)
+    })
+    Object.entries(seasonStats).forEach(([s, { vals }]) => {
+      const mean = vals.reduce((a, b) => a + b, 0) / vals.length
+      const std  = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length)
+      seasonStats[s] = { mean, std }
+    })
+    return rows.map(r => {
+      const { mean, std } = seasonStats[r.season] || { mean: 0, std: 1 }
+      return { ...r, z_score: std === 0 ? 0 : (r.positionless_index - mean) / std }
+    })
+  }, [rows])
+
+  const teams   = useMemo(() => [...new Set(rowsWithZ.map(r => r.playerteamName))].sort(), [rowsWithZ])
+  const seasons = useMemo(() => [...new Set(rowsWithZ.map(r => r.season))].sort((a, b) => b - a), [rowsWithZ])
 
   const filtered = useMemo(() => {
-    let r = rows
-    if (search)        r = r.filter(x => x.Name?.toLowerCase().includes(search.toLowerCase()))
-    if (teamFilter)    r = r.filter(x => x.playerteamName === teamFilter)
-    if (seasonFilter)  r = r.filter(x => String(x.season) === seasonFilter)
+    let r = rowsWithZ
+    if (search)          r = r.filter(x => x.Name?.toLowerCase().includes(search.toLowerCase()))
+    if (teamFilter)      r = r.filter(x => x.playerteamName === teamFilter)
+    if (seasonFilter)    r = r.filter(x => String(x.season) === seasonFilter)
     if (minGames !== '') r = r.filter(x => x.games_played >= Number(minGames))
     r = [...r].sort((a, b) => {
       const va = a[sortKey], vb = b[sortKey]
@@ -120,7 +155,7 @@ export default function Explorer({ data }) {
         : String(vb).localeCompare(String(va))
     })
     return r
-  }, [rows, search, teamFilter, seasonFilter, minGames, sortKey, sortDir])
+  }, [rowsWithZ, search, teamFilter, seasonFilter, minGames, sortKey, sortDir])
 
   const pages    = Math.ceil(filtered.length / PAGE_SIZE)
   const pageRows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -136,6 +171,7 @@ export default function Explorer({ data }) {
     { key: 'playerteamName',     label: 'Team' },
     { key: 'season',             label: 'Season' },
     { key: 'positionless_index', label: 'Positionless Index' },
+    { key: 'z_score',            label: 'Index Z-Score' },
     { key: 'games_played',       label: 'Games' },
   ]
 
@@ -143,11 +179,9 @@ export default function Explorer({ data }) {
     <div className="page">
       <div className="page-title">Positionless Index <span className="accent">Explorer</span></div>
       <div className="page-subtitle">
-        Browse all player–season positionless index scores. Click any row to view the player's trajectory.
-        <br></br>
+        Browse all player–season positionless index scores. Click any row to view the player's trajectory.<br></br>
         <i>Note: Games played includes playoff and play-in games but excludes any games where the player
-          played fewer than 10 minutes or did not attempt a field goal.
-        </i>
+          played fewer than 10 minutes or did not attempt a field goal.</i>
       </div>
 
       <div className="table-wrap">
@@ -205,7 +239,7 @@ export default function Explorer({ data }) {
             </thead>
             <tbody>
               {pageRows.length === 0 ? (
-                <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text3)', padding: '2rem' }}>No results</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text3)', padding: '2rem' }}>No results</td></tr>
               ) : pageRows.map((r, i) => (
                 <tr key={i} onClick={() => setSelected(r.Name)}>
                   <td style={{ fontWeight: 500, color: 'var(--white)' }}>{r.Name}</td>
@@ -213,6 +247,9 @@ export default function Explorer({ data }) {
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.season - 1}–{r.season}</td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.88rem', color: ORANGE2, fontWeight: 600 }}>
                     {Number(r.positionless_index).toFixed(4)}
+                  </td>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.88rem', color: r.z_score >= 0 ? ORANGE2 : TEXT2, fontWeight: 600 }}>
+                    {r.z_score >= 0 ? '+' : ''}{r.z_score.toFixed(3)}
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.games_played}</td>
                 </tr>
