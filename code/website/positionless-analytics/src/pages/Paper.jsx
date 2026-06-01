@@ -1,3 +1,4 @@
+//Generated with Claude in accordance with course AI policy
 const PAPER_URL = import.meta.env.VITE_PAPER_URL || ''
 
 export default function Paper() {
@@ -34,26 +35,6 @@ export default function Paper() {
           </div>
         </div>
       )}
-
-      {/* Citation block */}
-      <div style={{ marginTop: '2rem' }}>
-        <div className="section-label">Citation</div>
-        <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 6, padding: '1.2rem 1.4rem', marginTop: '0.6rem' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text2)', lineHeight: 1.8, userSelect: 'all' }}>
-            [Author(s)]. (2024). <em style={{ color: 'var(--text)' }}>Positionless Basketball and Injury Risk in the NBA: An Empirical Analysis.</em> Manuscript in preparation.
-          </div>
-        </div>
-      </div>
-
-      {/* Abstract placeholder */}
-      <div style={{ marginTop: '2rem' }}>
-        <div className="section-label">Abstract</div>
-        <div className="callout" style={{ marginTop: '0.6rem' }}>
-          <p>
-            We introduce a continuous Positionless Index to quantify role fluidity across NBA player-seasons (2014–2024) and model its relationship to injury risk. Using a CatBoost gradient-boosted classifier trained on 7-game rolling load windows and team context, we find that a one standard deviation increase in the positionless index is associated with an odds ratio of 1.081 (95% CI: 1.012–1.154) for injury in the subsequent game. A structural breakpoint test identifies the 2018–19 season as the inflection point for league-wide positional convergence.
-          </p>
-        </div>
-      </div>
     </div>
   )
 }
