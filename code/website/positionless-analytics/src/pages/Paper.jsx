@@ -6,7 +6,7 @@ export default function Paper() {
     <div className="page">
       <div className="page-title">Research <span className="accent">Paper</span></div>
       <div className="page-subtitle">
-        Full manuscript: Positionless Basketball and Injury Risk in the NBA
+        Positionless Basketball and Injury Risk in the National Basketball Association
       </div>
 
       {PAPER_URL ? (
@@ -28,9 +28,7 @@ export default function Paper() {
           <div className="paper-placeholder">
             <h2>Paper Coming Soon</h2>
             <p style={{ color: 'var(--text2)', fontSize: '0.88rem', maxWidth: 420, margin: '0 auto', lineHeight: 1.7 }}>
-              The full manuscript is under preparation. Set the{' '}
-              <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', background: 'var(--bg3)', padding: '0.1rem 0.3rem', borderRadius: 3 }}>VITE_PAPER_URL</code>{' '}
-              environment variable to embed a PDF URL here.
+              The full manuscript is under preparation.
             </p>
           </div>
         </div>
