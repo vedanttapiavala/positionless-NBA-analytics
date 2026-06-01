@@ -1,0 +1,44 @@
+import { useState, useEffect } from 'react'
+
+const MESSAGES = [
+  'LOADING PLAYER DATA…',
+  'COMPUTING POSITIONLESS INDEX…',
+  'CRUNCHING INJURY STATISTICS…',
+  'MAPPING POSITIONAL FLUIDITY…',
+  'ANALYZING 7-GAME ROLLING WINDOWS…',
+  'BUILDING RISK PROFILES…',
+  'AGGREGATING SEASON TRAJECTORIES…',
+  'ALMOST READY…',
+]
+
+function BasketballSVG() {
+  return (
+    <svg className="basketball-spin" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="36" cy="36" r="34" fill="#f7630c" stroke="#a33d00" strokeWidth="1.5"/>
+      {/* Seam lines */}
+      <path d="M36 2 C36 2 22 18 22 36 C22 54 36 70 36 70" stroke="#1a0800" strokeWidth="2.2" fill="none"/>
+      <path d="M36 2 C36 2 50 18 50 36 C50 54 36 70 36 70" stroke="#1a0800" strokeWidth="2.2" fill="none"/>
+      <path d="M2 36 C2 36 18 22 36 22 C54 22 70 36 70 36" stroke="#1a0800" strokeWidth="2.2" fill="none"/>
+      <path d="M2 36 C2 36 18 50 36 50 C54 50 70 36 70 36" stroke="#1a0800" strokeWidth="2.2" fill="none"/>
+      <circle cx="36" cy="36" r="34" fill="none" stroke="#ff8c42" strokeWidth="1" opacity="0.3"/>
+    </svg>
+  )
+}
+
+export default function Loader() {
+  const [msgIdx, setMsgIdx] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setMsgIdx(i => (i + 1) % MESSAGES.length)
+    }, 1600)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <div className="loader-wrap">
+      <BasketballSVG />
+      <div className="loader-msg">{MESSAGES[msgIdx]}</div>
+    </div>
+  )
+}
