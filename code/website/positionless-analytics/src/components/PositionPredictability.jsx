@@ -59,7 +59,7 @@ export default function PositionPredictability() {
               color: "#cccccc",
             }}
           >
-            Positionless basketball changed in 2019.
+            Positionless basketball changed in 2016.
           </h3>
 
           <p
@@ -70,7 +70,7 @@ export default function PositionPredictability() {
             }}
           >
             Position prediction becomes significantly worse (across sensitivity analyses)
-            in 2019, indicating more positional homogeneity and increased positionless character.
+            in 2016, indicating more positional homogeneity and increased positionless character.
           </p>
         </div>
       </div>

@@ -59,7 +59,7 @@ export default function CatBoostSHAP() {
               color: "#cccccc",
             }}
           >
-            Positionless index remains important after adjusting for other variables.
+            Positionless index is the central predictor after adjusting for other variables.
           </h3>
 
           <p
@@ -69,7 +69,7 @@ export default function CatBoostSHAP() {
               lineHeight: 1.4,
             }}
           >
-            Positionless index was the third most important variable in predicting injury risk.
+            Positionless index was the most important variable in predicting injury risk.
             After controlling for workload, playstyle, and team context, this variable remains important.
           </p>
         </div>

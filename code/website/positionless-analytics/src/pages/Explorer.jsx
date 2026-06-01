@@ -13,7 +13,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div style={{ background: '#12121a', border: '1px solid #2a2a3e', borderRadius: 6, padding: '8px 12px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>
-      <div style={{ color: '#9090aa', marginBottom: 4 }}>Season {label}</div>
+      <div style={{ color: '#9090aa', marginBottom: 4 }}>{label - 1}–{label}</div>
       {payload.map(p => (
         <div key={p.name} style={{ color: ORANGE }}>
           Index: <strong>{typeof p.value === 'number' ? p.value.toFixed(4) : p.value}</strong>
@@ -24,21 +24,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 function PlayerModal({ player, data, onClose }) {
-  // Find all seasons for this player from playersIndex
   const rows = useMemo(() =>
     (data?.playersIndexTable || [])
-      .filter(r => r.player === player)
+      .filter(r => r.Name === player)
       .sort((a, b) => a.season - b.season),
     [data, player]
   )
 
-  // Also check trajectories
-  const traj = useMemo(() => {
-    const t = (data?.playerTrajectories || []).find(t => t.player === player)
-    if (t) return t.trajectory
-    // Build from playersIndex rows
-    return rows.map(r => ({ season: r.season, positionless_index: r.positionless_index }))
-  }, [data, player, rows])
+  const traj = useMemo(() =>
+    (data?.playersIndexTable || [])
+      .filter(r => r.Name === player)
+      .map(r => ({ season: r.season, positionless_index: r.positionless_index }))
+      .sort((a, b) => a.season - b.season),
+    [data, player]
+  )
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -71,7 +70,7 @@ function PlayerModal({ player, data, onClose }) {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#1a1a26' }}>
-              {['Season','Team','Index','Games'].map(h => (
+              {['Season', 'Team', 'Index', 'Games'].map(h => (
                 <th key={h} style={{ padding: '8px 12px', fontSize: '0.72rem', fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5a5a72', textAlign: 'left', borderBottom: '1px solid #2a2a3e' }}>{h}</th>
               ))}
             </tr>
@@ -79,10 +78,10 @@ function PlayerModal({ player, data, onClose }) {
           <tbody>
             {rows.map((r, i) => (
               <tr key={i}>
-                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)', fontFamily: 'JetBrains Mono, monospace', color: '#9090aa' }}>{r.season}</td>
-                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)' }}><span className="badge">{r.team}</span></td>
+                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)', fontFamily: 'JetBrains Mono, monospace', color: '#9090aa' }}>{r.season - 1}–{r.season}</td>
+                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)' }}><span className="badge">{r.playerteamName}</span></td>
                 <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)', fontFamily: 'JetBrains Mono, monospace', color: ORANGE2, fontWeight: 600 }}>{Number(r.positionless_index).toFixed(4)}</td>
-                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)', color: '#9090aa', fontFamily: 'JetBrains Mono, monospace' }}>{r.games_played ?? '—'}</td>
+                <td style={{ padding: '7px 12px', fontSize: '0.85rem', borderBottom: '1px solid rgba(42,42,62,0.4)', fontFamily: 'JetBrains Mono, monospace', color: TEXT2 }}>{r.games_played}</td>
               </tr>
             ))}
           </tbody>
@@ -93,24 +92,26 @@ function PlayerModal({ player, data, onClose }) {
 }
 
 export default function Explorer({ data }) {
-  const [search,      setSearch]      = useState('')
-  const [teamFilter,  setTeamFilter]  = useState('')
-  const [seasonFilter,setSeasonFilter]= useState('')
-  const [sortKey,     setSortKey]     = useState('positionless_index')
-  const [sortDir,     setSortDir]     = useState('desc')
-  const [page,        setPage]        = useState(1)
-  const [selected,    setSelected]    = useState(null)
+  const [search,       setSearch]       = useState('')
+  const [teamFilter,   setTeamFilter]   = useState('')
+  const [seasonFilter, setSeasonFilter] = useState('')
+  const [minGames,     setMinGames]     = useState(65)
+  const [sortKey,      setSortKey]      = useState('positionless_index')
+  const [sortDir,      setSortDir]      = useState('desc')
+  const [page,         setPage]         = useState(1)
+  const [selected,     setSelected]     = useState(null)
 
   const rows = data?.playersIndexTable || []
 
-  const teams   = useMemo(() => [...new Set(rows.map(r => r.team))].sort(), [rows])
-  const seasons = useMemo(() => [...new Set(rows.map(r => r.season))].sort((a,b) => b - a), [rows])
+  const teams   = useMemo(() => [...new Set(rows.map(r => r.playerteamName))].sort(), [rows])
+  const seasons = useMemo(() => [...new Set(rows.map(r => r.season))].sort((a, b) => b - a), [rows])
 
   const filtered = useMemo(() => {
     let r = rows
-    if (search)       r = r.filter(x => x.player?.toLowerCase().includes(search.toLowerCase()))
-    if (teamFilter)   r = r.filter(x => x.team === teamFilter)
-    if (seasonFilter) r = r.filter(x => String(x.season) === seasonFilter)
+    if (search)        r = r.filter(x => x.Name?.toLowerCase().includes(search.toLowerCase()))
+    if (teamFilter)    r = r.filter(x => x.playerteamName === teamFilter)
+    if (seasonFilter)  r = r.filter(x => String(x.season) === seasonFilter)
+    if (minGames !== '') r = r.filter(x => x.games_played >= Number(minGames))
     r = [...r].sort((a, b) => {
       const va = a[sortKey], vb = b[sortKey]
       if (typeof va === 'number') return sortDir === 'asc' ? va - vb : vb - va
@@ -119,10 +120,10 @@ export default function Explorer({ data }) {
         : String(vb).localeCompare(String(va))
     })
     return r
-  }, [rows, search, teamFilter, seasonFilter, sortKey, sortDir])
+  }, [rows, search, teamFilter, seasonFilter, minGames, sortKey, sortDir])
 
-  const pages     = Math.ceil(filtered.length / PAGE_SIZE)
-  const pageRows  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const pages    = Math.ceil(filtered.length / PAGE_SIZE)
+  const pageRows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const handleSort = useCallback(key => {
     if (key === sortKey) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -131,11 +132,11 @@ export default function Explorer({ data }) {
   }, [sortKey])
 
   const cols = [
-    { key: 'player',             label: 'Player' },
-    { key: 'team',               label: 'Team' },
+    { key: 'Name',               label: 'Player' },
+    { key: 'playerteamName',     label: 'Team' },
     { key: 'season',             label: 'Season' },
-    { key: 'positionless_index', label: 'P. Index' },
-    { key: 'games_played',       label: 'GP' },
+    { key: 'positionless_index', label: 'Positionless Index' },
+    { key: 'games_played',       label: 'Games' },
   ]
 
   return (
@@ -143,6 +144,10 @@ export default function Explorer({ data }) {
       <div className="page-title">Positionless Index <span className="accent">Explorer</span></div>
       <div className="page-subtitle">
         Browse all player–season positionless index scores. Click any row to view the player's trajectory.
+        <br></br>
+        <i>Note: Games played includes playoff and play-in games but excludes any games where the player
+          played fewer than 10 minutes or did not attempt a field goal.
+        </i>
       </div>
 
       <div className="table-wrap">
@@ -169,6 +174,19 @@ export default function Explorer({ data }) {
             <option value="">All Seasons</option>
             {seasons.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
+          <input
+            className="search-input"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Min games…"
+            value={minGames}
+            onChange={e => { setMinGames(e.target.value); setPage(1) }}
+            style={{ width: 110 }}
+          />
+          {minGames !== '' && (
+            <button className="page-btn" onClick={() => { setMinGames(''); setPage(1) }}>✕ Games filter</button>
+          )}
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -189,14 +207,14 @@ export default function Explorer({ data }) {
               {pageRows.length === 0 ? (
                 <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text3)', padding: '2rem' }}>No results</td></tr>
               ) : pageRows.map((r, i) => (
-                <tr key={i} onClick={() => setSelected(r.player)}>
-                  <td style={{ fontWeight: 500, color: 'var(--white)' }}>{r.player}</td>
-                  <td><span className="badge">{r.team}</span></td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.season}</td>
+                <tr key={i} onClick={() => setSelected(r.Name)}>
+                  <td style={{ fontWeight: 500, color: 'var(--white)' }}>{r.Name}</td>
+                  <td><span className="badge">{r.playerteamName}</span></td>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.season - 1}–{r.season}</td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.88rem', color: ORANGE2, fontWeight: 600 }}>
                     {Number(r.positionless_index).toFixed(4)}
                   </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.games_played ?? '—'}</td>
+                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: TEXT2 }}>{r.games_played}</td>
                 </tr>
               ))}
             </tbody>

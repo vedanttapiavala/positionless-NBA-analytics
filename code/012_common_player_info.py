@@ -43,6 +43,8 @@ def fetch_player_bio(name, idx, total):
 def height_inches(h):
     if pd.isna(h):
         return None
+    if isinstance(h, float):
+        return h
     feet, inches = h.split('-')
     return int(feet) * 12 + int(inches)
 
@@ -90,6 +92,6 @@ df['age'] = (
     (df['gameDateTimeEst_player'] - df['birthdate']).dt.days / 365.25
 )
 
-results_df.to_csv('data/NBA Player Info.csv')
+results_df.to_csv('data/NBA Player Info.csv', index=False)
 
 df.to_parquet('data/Player-Games_Injuries_Travel_Bio.parquet')

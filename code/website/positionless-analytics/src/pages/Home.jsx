@@ -1,13 +1,12 @@
+// In accordance with this course's AI policy, Claude and ChatGPT were used for much of the code 
+// in this document, especially code related to UI/UX. However, all words and figures are my own.
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, BarChart, Bar, Cell
 } from 'recharts'
 import PositionPredictability from '../components/PositionPredictability'
 import CatBoostSHAP from '../components/CatBoostSHAP'
-import SHAPpositionlessScatter from '../components/SHAPpositionlessScatter'
 import InteractionForestPlot from '../components/InteractionForestPlot'
-// In accordance with this course's AI policy, Claude and ChatGPT were used for much of the code 
-// in this document, especially code related to UI/UX. However, all words and figures are my own.
 const ORANGE  = '#f7630c'
 const ORANGE2 = '#ff8c42'
 const TEXT2   = '#9090aa'
@@ -99,7 +98,7 @@ export default function Home({ data }) {
         />
         <StatCard
           label="Structural Shift Year"
-          value={agg.structural_shift_year || '2019'}
+          value={agg.structural_shift_year || '2016'}
           sub="Breakpoint in positional fluidity"
         />
         <StatCard
@@ -228,14 +227,13 @@ export default function Home({ data }) {
         <div className="section-title">Key Findings</div>
 
         <div className="callout">
-          <p>The NBA's evolution towards positionless basketball shifted significantly around the 2018–19 season.
+          <p>The NBA's evolution towards positionless basketball shifted significantly around the 2015–16 season.
             Players with higher positionless indices face roughly <strong>8.1% higher injury odds</strong> per standard deviation
             increase in the index, controlling for workload, team context, and playstyle.</p>
         </div>
         <div style={{ display: 'flex', gap: '16px', flexDirection: 'column' }}>
         <PositionPredictability />
         <CatBoostSHAP />
-        <SHAPpositionlessScatter />
         <InteractionForestPlot />
         </div>
       </div>
@@ -251,9 +249,10 @@ export default function Home({ data }) {
           the highest risk. Given this research, teams may decide to:
           <ol>
             <li> Manage positionless players' skillsets to avoid concentrating
-              perimeter creation and spacing responsibilities. </li>
-            <li> Train players constrained to one role with additional skillsets, making them more
-              positionless.
+              perimeter creation/defense and spacing responsibilities. </li>
+            <li> For positionless players, monitor or constrain their responsibilities to those of fewer positions.
+              This constraint may be especially important in the regular season, where teams increasingly try to manage 
+              and prevent injuries, even if it leads to a slightly inferior seeding than the team's potential seed.
             </li>
           </ol>
         </p>

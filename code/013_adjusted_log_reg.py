@@ -14,7 +14,7 @@ or_df, auc, ap = test_model(df_injury_features.dropna())
 
 print(or_df)
 
-# ROC-AUC: 0.5862788615014256
-# PR-AUC: 0.24860775785047556
+# ROC-AUC: 0.5850438285293822
+# PR-AUC: 0.24625741885085772
 # Positionless index is still significant
 print(auc, ap)
