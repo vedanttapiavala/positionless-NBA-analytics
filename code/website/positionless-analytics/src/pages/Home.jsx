@@ -142,7 +142,7 @@ export default function Home({ data }) {
           <ul><li>
             <a href='https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores' target='_blank'>
           <strong>NBA Box Scores - Player and Team Statistics</strong></a>
-          <blockquote className='indented'>NBA regular season, playoff, and play-in games were analyzed from 1983-84 through 2025–26. 
+          <blockquote className='indented'>NBA regular season, playoff, and play-in games were analyzed from 1982-83 through 2025–26. 
           Individual player games were analyzed for all players logging at least 10 minutes and one field goal attempt.
           Overall, this led to the inclusion of over 870,000 player–game records.
           Each record includes box-score statistics for both the player and the team.</blockquote>
