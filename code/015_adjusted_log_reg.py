@@ -10,7 +10,24 @@ injury_features = ['home_player', 'positionless_index',
                    'games_last_14d', 'distance_miles',
                    'tz_shift_hrs', 'rest_days', 'age', 'height', 'weight']
 df_injury_features = df[injury_features + ['gameDateTimeEst_player', 'injury_within_14d']]
-or_df, auc, ap = test_model(df_injury_features.dropna())
+or_df, auc, ap = test_model(df_injury_features.dropna(),
+                            {
+                                'home_player': 'Game at Home',
+                                'positionless_index': 'Positionless Index',
+                                'rolling_7g_minutes': 'Minutes (Rolling: 7 Games)',
+                                'rolling_7g_points_per36': 'Points per 36 Minutes (Rolling: 7 Games)',
+                                'rolling_7g_three_pointers_attempted': '3PA (Rolling: 7 Games)',
+                                'rolling_7g_assists_per36': 'Assists per 36 Minutes (Rolling: 7 Games)',
+                                'rolling_7g_USG': 'Usage Rate (Rolling: 7 Games)',
+                                'rolling_7g_three_pointers_made': '3PM (Rolling: 7 Games)',
+                                'games_last_14d': 'Games Played over the Last 14 Days',
+                                'distance_miles': 'Flight Distance (miles)',
+                                'tz_shift_hrs': 'Timezone Shift',
+                                'rest_days': 'Number of Rest Days',
+                                'age': 'Age',
+                                'height': 'Height (inches)',
+                                'weight': 'Weight (lbs)'
+                            })
 
 print(or_df)
 

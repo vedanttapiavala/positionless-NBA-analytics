@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score, average_precision_score
 import networkx as nx
+from scipy.stats import false_discovery_control
 
 def convert_csv_parquet(filename, dtype_arr, usecols) -> None:
     df = pd.read_csv(f'{filename}.csv', dtype=dtype_arr,  usecols=usecols)
@@ -75,7 +76,7 @@ def prune_redundant_features(X):
         set(features) - set(kept_features)
     )
 
-def test_model(df_model):
+def test_model(df_model, feature_renaming = None):
     assert 'gameDateTimeEst_player' in df_model.columns, 'Game Date/Time Not Found'
     assert 'injury_within_14d' in df_model.columns, 'Target Variable for Injury Not Found'
 
@@ -137,30 +138,43 @@ def test_model(df_model):
         "feature": params.index,
         "OR": np.exp(params.values),
         "lower": np.exp(conf[0].values),
-        "upper": np.exp(conf[1].values)
+        "upper": np.exp(conf[1].values),
+        'p_value': model.pvalues
     })
 
+    or_df['Adj p-value'] = false_discovery_control(or_df['p_value'])
+
     or_df = or_df[or_df["feature"] != "const"].sort_values("OR")
+    or_df["significant"] = or_df["Adj p-value"] < 0.05
+
+    if feature_renaming is not None:
+        or_df["feature"] = or_df["feature"].map(
+            lambda x: feature_renaming.get(x, x)
+        )
 
     # -----------------------------
     # 5. Forest plot
     # -----------------------------
     plt.figure(figsize=(8, max(5, len(or_df) * 0.35)))
 
-    plt.errorbar(
-        or_df["OR"],
-        or_df["feature"],
-        xerr=[
-            or_df["OR"] - or_df["lower"],
-            or_df["upper"] - or_df["OR"]
-        ],
-        fmt="o"
-    )
+    for _, row in or_df.iterrows():
+        color = '#1f77b4' if row['significant'] else '#cccccc'
+        plt.errorbar(
+            row['OR'],
+            row['feature'],
+            xerr=[[row['OR'] - row['lower']],
+                  [row['upper'] - row['OR']]],
+            fmt = 'o',
+            color=color,
+            ecolor=color,
+            capsize=3
+        )
 
     plt.axvline(1, color="black", linestyle="--")
     plt.xlabel("Odds Ratio (standardized features)")
-    plt.title("Injury Risk Forest Plot")
     plt.tight_layout()
     plt.show()
+
+    or_df = or_df.drop(columns=['significant'])
 
     return or_df, auc, ap
