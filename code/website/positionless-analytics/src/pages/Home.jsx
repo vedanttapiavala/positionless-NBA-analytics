@@ -103,7 +103,7 @@ export default function Home({ data }) {
         />
         <StatCard
           label="Injury Odds Ratio"
-          value='+8.1%'
+          value='+17.0%'
           sub="Injury odds per standard deviation increase in positionless increase"
         />
       </div>
@@ -228,7 +228,7 @@ export default function Home({ data }) {
 
         <div className="callout">
           <p>The NBA's evolution towards positionless basketball shifted significantly around the 2015–16 season.
-            Players with higher positionless indices face roughly <strong>8.1% higher injury odds</strong> per standard deviation
+            Players with higher positionless indices face roughly <strong>17.0% higher injury odds</strong> per standard deviation
             increase in the index, controlling for workload, team context, and playstyle.</p>
         </div>
         <div style={{ display: 'flex', gap: '16px', flexDirection: 'column' }}>
