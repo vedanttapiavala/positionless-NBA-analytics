@@ -1,3 +1,5 @@
+// This code was written by Claude in accordance with our course's AI use policy.
+
 import { useState, useEffect } from 'react'
 
 const FILES = {

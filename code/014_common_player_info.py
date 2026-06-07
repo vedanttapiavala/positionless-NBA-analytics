@@ -5,6 +5,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 
+# This code was mostly written by Claude, as was allowed in our course's AI Use policy
+
 def fetch_player_bio(name, idx, total):
     print(f'{idx}/{total}: {name}')
     manual_renaming = {

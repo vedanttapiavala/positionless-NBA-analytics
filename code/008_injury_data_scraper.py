@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
+# This code was written by Claude in accordance with this course's AI Use policy.
+
 BASE_URL = "https://hashtagbasketball.com"
 SUFFIXES_FILE = "data/injury_url_suffixes.txt"
 

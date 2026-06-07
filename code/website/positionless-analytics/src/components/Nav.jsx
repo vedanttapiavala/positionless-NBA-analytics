@@ -1,3 +1,5 @@
+// This code was written by Claude in accordance with our course's AI use policy.
+
 import { NavLink } from 'react-router-dom'
 
 function BasketballIcon() {

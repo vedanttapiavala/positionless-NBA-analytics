@@ -6,6 +6,8 @@ import Home      from './pages/Home'
 import Explorer  from './pages/Explorer'
 import Paper     from './pages/Paper'
 
+// This code was mostly written by Claude in accordance with our course's AI use policy
+
 export default function App() {
   const { data, loading } = useData()
 

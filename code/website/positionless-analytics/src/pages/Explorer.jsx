@@ -1,3 +1,5 @@
+// This code was written by Claude in accordance with our course's AI use policy.
+
 import { useState, useMemo, useCallback } from 'react'
 import {
   LineChart, Line, XAxis, YAxis, Tooltip,

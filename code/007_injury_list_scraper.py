@@ -14,6 +14,8 @@ import re
 # The code also opens a new window, where you can see the size of your search queue and injury list output items
 # You can also see the current query on that window.
 
+# This code was written by Claude in accordance with this course's AI use policy
+
 def get_field(name):
     return soup.find("input", {"name": name})["value"]
 
